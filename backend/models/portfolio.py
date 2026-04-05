@@ -8,3 +8,4 @@ class PortfolioItem(BaseModel):
 
 class PortfolioRequest(BaseModel):
     items: List[PortfolioItem]
+    user_question: str

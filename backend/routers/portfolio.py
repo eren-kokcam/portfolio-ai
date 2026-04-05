@@ -1,5 +1,8 @@
 from fastapi import APIRouter
 from models.portfolio import PortfolioRequest
+from services.data_service import fetch_portfolio_data
+from services.context_service import prepare_context
+from services.llm_service import analyze_portfolio
 
 router = APIRouter(
     prefix="/portfolio",
@@ -8,5 +11,8 @@ router = APIRouter(
 
 @router.post("/")
 def send_portfolio(request: PortfolioRequest):
-    return request
+    stock_data = fetch_portfolio_data(request)
+    context = prepare_context(request.items, stock_data, request.user_question)
+    analysis = analyze_portfolio(context)
+    return analysis
 
