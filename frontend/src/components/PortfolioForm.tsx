@@ -12,12 +12,14 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
     ]);
     const [userQuestion, setUserQuestion] = useState('');
 
+    const inputClass = "border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500";
+
     return (
         <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-800">Portföyünü Gir</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Portföyünü Gir</h2>
             
             <div className="space-y-2">
-                <div className="grid grid-cols-4 gap-2 text-sm font-medium text-gray-500 px-1">
+                <div className="grid grid-cols-4 gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
                     <span>Sembol</span>
                     <span>Miktar</span>
                     <span>Alış Fiyatı</span>
@@ -34,7 +36,7 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
                                 newItems[index].symbol = e.target.value;
                                 setItems(newItems);
                             }}
-                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className={inputClass}
                         />
                         <input
                             type="number"
@@ -45,7 +47,7 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
                                 newItems[index].quantity = parseFloat(e.target.value);
                                 setItems(newItems);
                             }}
-                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className={inputClass}
                         />
                         <input
                             type="number"
@@ -56,7 +58,7 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
                                 newItems[index].purchase_price = parseFloat(e.target.value);
                                 setItems(newItems);
                             }}
-                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className={inputClass}
                         />
                         <button
                             onClick={() => setItems(items.filter((_, i) => i !== index))}
@@ -80,7 +82,7 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
                 placeholder="Sorunuz nedir? (ör: Portföyümün riski nedir?)"
                 value={userQuestion}
                 onChange={(e) => setUserQuestion(e.target.value)}
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full ${inputClass}`}
             />
 
             <button
