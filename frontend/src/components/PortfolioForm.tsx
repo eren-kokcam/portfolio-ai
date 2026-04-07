@@ -13,60 +13,83 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
     const [userQuestion, setUserQuestion] = useState('');
 
     return (
-        <div>
-            <h2>Enter Your Portfolio</h2>
-            {items.map((item, index) => (
-                <div key={index}>
-                    <input
-                        type="text"
-                        placeholder="Symbol"
-                        value={item.symbol}
-                        onChange={(e) => {
-                            const newItems = [...items];
-                            newItems[index].symbol = e.target.value;
-                            setItems(newItems);
-                        }}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Quantity"
-                        value={item.quantity}
-                        onChange={(e) => {
-                            const newItems = [...items];
-                            newItems[index].quantity = parseFloat(e.target.value);
-                            setItems(newItems);
-                        }}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Purchase Price"
-                        value={item.purchase_price}
-                        onChange={(e) => {
-                            const newItems = [...items];
-                            newItems[index].purchase_price = parseFloat(e.target.value);
-                            setItems(newItems);
-                        }}
-                    />
+        <div className="space-y-6">
+            <h2 className="text-xl font-semibold text-gray-800">Portföyünü Gir</h2>
+            
+            <div className="space-y-2">
+                <div className="grid grid-cols-4 gap-2 text-sm font-medium text-gray-500 px-1">
+                    <span>Sembol</span>
+                    <span>Miktar</span>
+                    <span>Alış Fiyatı</span>
+                    <span></span>
                 </div>
-            ))}
-            <button onClick={() => setItems([...items, { symbol: '', quantity: 0, purchase_price: 0 }])}>
-                Add Item
-            </button>
-            <div>
-                <input
-                    type="text"
-                    placeholder="Your Question"
-                    value={userQuestion}
-                    onChange={(e) => setUserQuestion(e.target.value)}
-                />
+                {items.map((item, index) => (
+                    <div key={index} className="grid grid-cols-4 gap-2">
+                        <input
+                            type="text"
+                            placeholder="THYAO"
+                            value={item.symbol}
+                            onChange={(e) => {
+                                const newItems = [...items];
+                                newItems[index].symbol = e.target.value;
+                                setItems(newItems);
+                            }}
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <input
+                            type="number"
+                            placeholder="0"
+                            value={item.quantity || ''}
+                            onChange={(e) => {
+                                const newItems = [...items];
+                                newItems[index].quantity = parseFloat(e.target.value);
+                                setItems(newItems);
+                            }}
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <input
+                            type="number"
+                            placeholder="0.00"
+                            value={item.purchase_price || ''}
+                            onChange={(e) => {
+                                const newItems = [...items];
+                                newItems[index].purchase_price = parseFloat(e.target.value);
+                                setItems(newItems);
+                            }}
+                            className="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button
+                            onClick={() => setItems(items.filter((_, i) => i !== index))}
+                            className="text-red-400 hover:text-red-600 text-sm"
+                        >
+                            Sil
+                        </button>
+                    </div>
+                ))}
             </div>
+
+            <button
+                onClick={() => setItems([...items, { symbol: '', quantity: 0, purchase_price: 0 }])}
+                className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+            >
+                + Varlık Ekle
+            </button>
+
+            <input
+                type="text"
+                placeholder="Sorunuz nedir? (ör: Portföyümün riski nedir?)"
+                value={userQuestion}
+                onChange={(e) => setUserQuestion(e.target.value)}
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
             <button
                 onClick={() => onSubmit({ items, user_question: userQuestion })}
                 disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium py-2 px-4 rounded transition-colors"
             >
-                {loading ? 'Submitting...' : 'Submit Portfolio'}
+                {loading ? 'Analiz yapılıyor...' : 'Analiz Et'}
             </button>
-            
         </div>
     );
 };
