@@ -1,5 +1,6 @@
 import PortfolioForm from "../components/PortfolioForm";
 import { usePortfolio } from "../hooks/usePortfolio";
+import ReactMarkdown from 'react-markdown';
 
 const PortfolioPage = () => {
     const { loading, analysis, error, submitPortfolio } = usePortfolio();
@@ -12,7 +13,7 @@ const PortfolioPage = () => {
             {analysis && (
                 <div>
                     <h2>Analysis Result</h2>
-                    <p>{analysis}</p>
+                    <ReactMarkdown>{analysis}</ReactMarkdown>
                 </div>
             )}
         </div>
