@@ -6,7 +6,9 @@ load_dotenv()
 class Settings(BaseSettings):
     anthropic_api_key: str
     alpha_vantage_api_key: str
-
+    supabase_url: str
+    supabase_secret_key: str
+    
     class Config:
         env_file = ".env"
 

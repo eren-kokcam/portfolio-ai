@@ -2,6 +2,7 @@ import ReactMarkdown from 'react-markdown';
 import PortfolioForm from '../components/PortfolioForm';
 import { usePortfolio } from '../hooks/usePortfolio';
 import { useState, useEffect } from 'react';
+import { supabase } from '../services/supabaseClient';
 
 const PortfolioPage = () => {
     const { loading, analysis, error, submitPortfolio } = usePortfolio();
@@ -15,13 +16,22 @@ const PortfolioPage = () => {
         }
     }, [darkMode]);
 
+    const handleSignOut = async () => {
+        await supabase.auth.signOut();
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
             <header className="border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Portfolio AI</h1>
-                <button onClick={() => setDarkMode(!darkMode)} className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
-                    {darkMode ? '☀️' : '🌙'}
-                </button>
+                <div className="flex items-center gap-6">
+                    <button onClick={() => setDarkMode(!darkMode)} className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">
+                        {darkMode ? '☀️' : '🌙'}
+                    </button>
+                    <button onClick={handleSignOut} className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white text-sm">
+                        Çıkış
+                    </button>
+                </div>
             </header>
             <main className="max-w-3xl mx-auto px-6 py-8">
                 <PortfolioForm onSubmit={submitPortfolio} loading={loading} />
