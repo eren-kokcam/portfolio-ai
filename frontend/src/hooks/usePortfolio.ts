@@ -13,7 +13,7 @@ export const usePortfolio = () => {
         setAnalysis(null);
         try {
             const response = await portfolioService.submitPortfolio(request);
-            setAnalysis(response.analysis);
+            setAnalysis(response);
         } catch (err) {
             setError('Failed to submit portfolio. Please try again.');
         } finally {
