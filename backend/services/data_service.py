@@ -1,26 +1,39 @@
 import requests
 from core.config import settings
+import yfinance as yf
 
 def fetch_stock_data(symbol: str):
     try:
-        url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={settings.alpha_vantage_api_key}'
-        r = requests.get(url)
-        data = r.json()
-        quote = data["Global Quote"]
-        if not quote:
+        yf_symbol = f"{symbol}.IS" if not symbol.endswith(".IS") else symbol
+        ticker = yf.Ticker(yf_symbol)
+        info = ticker.fast_info
+        
+        price = info.last_price
+        prev_close = info.previous_close
+        
+        if not price:
+            ticker = yf.Ticker(symbol)
+            info = ticker.fast_info
+            price = info.last_price
+            prev_close = info.previous_close
+        
+        if not price:
             return None
-
+            
+        change = price - prev_close
+        change_percent = f"{(change / prev_close * 100):.2f}%"
+        
         return {
-            "symbol": quote["01. symbol"],
-            "price": float(quote["05. price"]),
-            "change": float(quote["09. change"]),
-            "change_percent": quote["10. change percent"],
-            "prev_close": float(quote["08. previous close"]),
+            "symbol": symbol,
+            "price": float(price),
+            "change": float(change),
+            "change_percent": change_percent,
+            "prev_close": float(prev_close),
         }
     except Exception as e:
         print(f"Error fetching stock data for {symbol}: {e}")
         return None
-    
+
 def fetch_portfolio_data(portfolio_request):
     results = []
     for item in portfolio_request.items:
