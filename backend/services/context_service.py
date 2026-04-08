@@ -4,7 +4,7 @@ def prepare_context(potfolio_items, stock_data, user_question: str) -> str:
     stock_map = {s["symbol"]: s for s in stock_data}
 
     for item in potfolio_items:
-        stock = stock_map.get(item.symbol.upper())
+        stock = stock_map.get(item.symbol.replace('İ', 'I').replace('ı', 'i').replace('Ş', 'S').replace('ş', 's').replace('Ğ', 'G').replace('ğ', 'g').replace('Ü', 'U').replace('ü', 'u').replace('Ö', 'O').replace('ö', 'o').replace('Ç', 'C').replace('ç', 'c').upper())
         if not stock:
             context += f"- {item.symbol}:fiyat verisi alınamadı\n"
             continue

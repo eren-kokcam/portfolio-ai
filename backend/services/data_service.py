@@ -13,7 +13,7 @@ SYMBOL_MAP = {
 }
 
 def fetch_stock_data(symbol: str):
-    symbol_upper = symbol.upper().replace('İ', 'I').replace('Ş', 'S').replace('Ğ', 'G').replace('Ü', 'U').replace('Ö', 'O').replace('Ç', 'C')
+    symbol_upper = symbol.replace('İ', 'I').replace('ı', 'i').replace('Ş', 'S').replace('ş', 's').replace('Ğ', 'G').replace('ğ', 'g').replace('Ü', 'U').replace('ü', 'u').replace('Ö', 'O').replace('ö', 'o').replace('Ç', 'C').replace('ç', 'c').upper()
 
     # Alias varsa direkt kullan
     if symbol_upper in SYMBOL_MAP:
