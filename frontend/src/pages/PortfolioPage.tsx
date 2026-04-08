@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { portfolioDbService } from '../services/portfolioDbService';
 import type { PortfolioRequest } from '../types/portfolio';
+import SavedPortfolios from '../components/SavedPortfolios';
 
 const PortfolioPage = () => {
     const { loading, analysis, error, submitPortfolio } = usePortfolio();
@@ -58,6 +59,7 @@ const PortfolioPage = () => {
             </header>
             <main className="max-w-3xl mx-auto px-6 py-8">
                 <PortfolioForm onSubmit={handleSubmit} loading={loading} />
+                <SavedPortfolios />
                 {loading && <p className="mt-4 text-gray-500 dark:text-gray-400">Analiz yapılıyor...</p>}
                 {error && <p className="mt-4 text-red-500">{error}</p>}
                 {analysis && (
