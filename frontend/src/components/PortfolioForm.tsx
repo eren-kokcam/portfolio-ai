@@ -8,7 +8,7 @@ interface PortfolioFormProps {
 
 const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
     const [items, setItems] = useState<PortfolioItem[]>([
-        { symbol: '', quantity: 0, purchase_price: 0 }
+        { symbol: '', quantity: 0, purchase_price: 0, currency: 'TRY' }
     ]);
     const [userQuestion, setUserQuestion] = useState('');
 
@@ -19,14 +19,15 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Portföyünü Gir</h2>
             
             <div className="space-y-2">
-                <div className="grid grid-cols-4 gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
+                <div className="grid grid-cols-5 gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
                     <span>Sembol</span>
                     <span>Miktar</span>
                     <span>Alış Fiyatı</span>
+                    <span>Para Birimi</span>
                     <span></span>
                 </div>
                 {items.map((item, index) => (
-                    <div key={index} className="grid grid-cols-4 gap-2">
+                    <div key={index} className="grid grid-cols-5 gap-2">
                         <input
                             type="text"
                             placeholder="THYAO"
@@ -60,6 +61,18 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
                             }}
                             className={inputClass}
                         />
+                        <select
+                            value={item.currency}
+                            onChange={(e) => {
+                                const newItems = [...items];
+                                newItems[index].currency = e.target.value as 'TRY' | 'USD';
+                                setItems(newItems);
+                            }}
+                            className={inputClass}
+                        >
+                            <option value="TRY">TRY</option>
+                            <option value="USD">USD</option>
+                        </select>
                         <button
                             onClick={() => setItems(items.filter((_, i) => i !== index))}
                             className="text-red-400 hover:text-red-600 text-sm"
@@ -71,7 +84,7 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
             </div>
 
             <button
-                onClick={() => setItems([...items, { symbol: '', quantity: 0, purchase_price: 0 }])}
+                onClick={() => setItems([...items, { symbol: '', quantity: 0, purchase_price: 0, currency: 'TRY' }])}
                 className="text-blue-500 hover:text-blue-700 text-sm font-medium"
             >
                 + Varlık Ekle
