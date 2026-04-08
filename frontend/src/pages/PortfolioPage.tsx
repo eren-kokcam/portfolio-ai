@@ -3,10 +3,15 @@ import PortfolioForm from '../components/PortfolioForm';
 import { usePortfolio } from '../hooks/usePortfolio';
 import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
+import { portfolioDbService } from '../services/portfolioDbService';
+import type { PortfolioRequest } from '../types/portfolio';
 
 const PortfolioPage = () => {
     const { loading, analysis, error, submitPortfolio } = usePortfolio();
     const [darkMode, setDarkMode] = useState(false);
+    const [currentItems, setCurrentItems] = useState<any[]>([]);
+    const [portfolioName, setPortfolioName] = useState('');
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (darkMode) {
@@ -18,6 +23,24 @@ const PortfolioPage = () => {
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
+    };
+
+    const handleSubmit = (request: PortfolioRequest) => {
+        setCurrentItems(request.items);
+        submitPortfolio(request);
+    };
+
+    const handleSave = async () => {
+        if (!portfolioName) return;
+        setSaving(true);
+        try {
+            await portfolioDbService.saveFullPortfolio(portfolioName, currentItems);
+            alert('Portföy kaydedildi!');
+        } catch (err) {
+            alert('Kayıt hatası!');
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
@@ -34,7 +57,7 @@ const PortfolioPage = () => {
                 </div>
             </header>
             <main className="max-w-3xl mx-auto px-6 py-8">
-                <PortfolioForm onSubmit={submitPortfolio} loading={loading} />
+                <PortfolioForm onSubmit={handleSubmit} loading={loading} />
                 {loading && <p className="mt-4 text-gray-500 dark:text-gray-400">Analiz yapılıyor...</p>}
                 {error && <p className="mt-4 text-red-500">{error}</p>}
                 {analysis && (
@@ -42,6 +65,22 @@ const PortfolioPage = () => {
                         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Analiz Sonucu</h2>
                         <div className="text-gray-800 dark:text-gray-200">
                             <ReactMarkdown>{analysis}</ReactMarkdown>
+                        </div>
+                        <div className="mt-4 flex gap-2">
+                            <input
+                                type="text"
+                                placeholder="Portföy adı"
+                                value={portfolioName}
+                                onChange={(e) => setPortfolioName(e.target.value)}
+                                className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            />
+                            <button
+                                onClick={handleSave}
+                                disabled={saving}
+                                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm"
+                            >
+                                {saving ? 'Kaydediliyor...' : 'Portföyü Kaydet'}
+                            </button>
                         </div>
                     </div>
                 )}
