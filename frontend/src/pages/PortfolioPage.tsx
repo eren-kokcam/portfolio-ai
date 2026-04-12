@@ -1,11 +1,11 @@
 import ReactMarkdown from 'react-markdown';
 import PortfolioForm from '../components/PortfolioForm';
+import SavedPortfolios from '../components/SavedPortfolios';
 import { usePortfolio } from '../hooks/usePortfolio';
 import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { portfolioDbService } from '../services/portfolioDbService';
 import type { PortfolioRequest } from '../types/portfolio';
-import SavedPortfolios from '../components/SavedPortfolios';
 
 const PortfolioPage = () => {
     const { loading, analysis, error, submitPortfolio } = usePortfolio();
@@ -13,6 +13,7 @@ const PortfolioPage = () => {
     const [currentItems, setCurrentItems] = useState<any[]>([]);
     const [portfolioName, setPortfolioName] = useState('');
     const [saving, setSaving] = useState(false);
+    const [loadedItems, setLoadedItems] = useState<any[]>([]);
 
     useEffect(() => {
         if (darkMode) {
@@ -24,6 +25,10 @@ const PortfolioPage = () => {
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
+    };
+
+    const handleLoad = (items: any[]) => {
+        setLoadedItems(items);
     };
 
     const handleSubmit = (request: PortfolioRequest) => {
@@ -58,8 +63,8 @@ const PortfolioPage = () => {
                 </div>
             </header>
             <main className="max-w-3xl mx-auto px-6 py-8">
-                <PortfolioForm onSubmit={handleSubmit} loading={loading} />
-                <SavedPortfolios />
+                <SavedPortfolios onLoad={handleLoad} />
+                <PortfolioForm onSubmit={handleSubmit} loading={loading} initialItems={loadedItems} />
                 {loading && <p className="mt-4 text-gray-500 dark:text-gray-400">Analiz yapılıyor...</p>}
                 {error && <p className="mt-4 text-red-500">{error}</p>}
                 {analysis && (

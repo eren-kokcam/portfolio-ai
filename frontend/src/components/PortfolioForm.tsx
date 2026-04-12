@@ -1,23 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { PortfolioItem, PortfolioRequest } from '../types/portfolio';
 
 interface PortfolioFormProps {
     onSubmit: (request: PortfolioRequest) => void;
     loading: boolean;
+    initialItems?: PortfolioItem[];
 }
 
-const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
-    const [items, setItems] = useState<PortfolioItem[]>([
-        { symbol: '', quantity: 0, purchase_price: 0, currency: 'TRY' }
-    ]);
+const PortfolioForm = ({ onSubmit, loading, initialItems }: PortfolioFormProps) => {
+    const [items, setItems] = useState<PortfolioItem[]>(
+        initialItems ?? [{ symbol: '', quantity: 0, purchase_price: 0, currency: 'TRY' }]
+    );
     const [userQuestion, setUserQuestion] = useState('');
+
+    useEffect(() => {
+        if (initialItems && initialItems.length > 0) {
+            setItems(initialItems);
+        }
+    }, [initialItems]);
 
     const inputClass = "border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500";
 
     return (
         <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Portföyünü Gir</h2>
-            
             <div className="space-y-2">
                 <div className="grid grid-cols-5 gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
                     <span>Sembol</span>
@@ -82,14 +88,12 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
                     </div>
                 ))}
             </div>
-
             <button
                 onClick={() => setItems([...items, { symbol: '', quantity: 0, purchase_price: 0, currency: 'TRY' }])}
                 className="text-blue-500 hover:text-blue-700 text-sm font-medium"
             >
                 + Varlık Ekle
             </button>
-
             <input
                 type="text"
                 placeholder="Sorunuz nedir? (ör: Portföyümün riski nedir?)"
@@ -97,7 +101,6 @@ const PortfolioForm = ({ onSubmit, loading }: PortfolioFormProps) => {
                 onChange={(e) => setUserQuestion(e.target.value)}
                 className={`w-full ${inputClass}`}
             />
-
             <button
                 onClick={() => onSubmit({ items, user_question: userQuestion })}
                 disabled={loading}
