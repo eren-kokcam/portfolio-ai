@@ -7,7 +7,7 @@ import { supabase } from '../services/supabaseClient';
 import { portfolioDbService } from '../services/portfolioDbService';
 import type { PortfolioRequest } from '../types/portfolio';
 import PortfolioChart from '../components/PortfolioChart';
-import PortfolioLineChart from '../components/PortfolioLineChart';
+/* import PortfolioLineChart from '../components/PortfolioLineChart'; */
 
 const PortfolioPage = () => {
     const { loading, analysis, error, stockData, submitPortfolio } = usePortfolio();
