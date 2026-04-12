@@ -19,21 +19,21 @@ const PortfolioForm = ({ onSubmit, loading, initialItems }: PortfolioFormProps) 
         }
     }, [initialItems]);
 
-    const inputClass = "border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500";
+    const inputClass = "w-full bg-transparent border-b border-white/15 py-2 text-white text-sm placeholder-white/25 focus:outline-none focus:border-white/50 transition-colors";
+    const selectClass = "w-full bg-black border-b border-white/15 py-2 text-white text-sm focus:outline-none focus:border-white/50 transition-colors";
 
     return (
         <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Portföyünü Gir</h2>
-            <div className="space-y-2">
-                <div className="grid grid-cols-5 gap-2 text-sm font-medium text-gray-500 dark:text-gray-400 px-1">
+            <div className="space-y-3">
+                <div className="grid grid-cols-5 gap-4 text-xs tracking-widest uppercase text-white/30 pb-1">
                     <span>Sembol</span>
                     <span>Miktar</span>
                     <span>Alış Fiyatı</span>
-                    <span>Para Birimi</span>
+                    <span>Birim</span>
                     <span></span>
                 </div>
                 {items.map((item, index) => (
-                    <div key={index} className="grid grid-cols-5 gap-2">
+                    <div key={index} className="grid grid-cols-5 gap-4 items-end">
                         <input
                             type="text"
                             placeholder="THYAO"
@@ -74,39 +74,42 @@ const PortfolioForm = ({ onSubmit, loading, initialItems }: PortfolioFormProps) 
                                 newItems[index].currency = e.target.value as 'TRY' | 'USD';
                                 setItems(newItems);
                             }}
-                            className={inputClass}
+                            className={selectClass}
                         >
                             <option value="TRY">TRY</option>
                             <option value="USD">USD</option>
                         </select>
                         <button
                             onClick={() => setItems(items.filter((_, i) => i !== index))}
-                            className="text-red-400 hover:text-red-600 text-sm"
+                            className="text-white/20 hover:text-red-400 text-xs transition-colors pb-2"
                         >
                             Sil
                         </button>
                     </div>
                 ))}
             </div>
+
             <button
                 onClick={() => setItems([...items, { symbol: '', quantity: 0, purchase_price: 0, currency: 'TRY' }])}
-                className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+                className="text-white/30 hover:text-white text-xs tracking-widest uppercase transition-colors"
             >
                 + Varlık Ekle
             </button>
+
             <input
                 type="text"
                 placeholder="Sorunuz nedir? (ör: Portföyümün riski nedir?)"
                 value={userQuestion}
                 onChange={(e) => setUserQuestion(e.target.value)}
-                className={`w-full ${inputClass}`}
+                className={inputClass}
             />
+
             <button
                 onClick={() => onSubmit({ items, user_question: userQuestion })}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium py-2 px-4 rounded transition-colors"
+                className="w-full bg-white text-black text-sm font-semibold py-4 rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-40"
             >
-                {loading ? 'Analiz yapılıyor...' : 'Analiz Et'}
+                {loading ? '...' : 'Analiz Et →'}
             </button>
         </div>
     );

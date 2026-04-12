@@ -38,47 +38,47 @@ const SavedPortfolios = ({ onLoad }: SavedPortfoliosProps) => {
     }, []);
 
     return (
-        <div className="mb-8">
+        <div className="mb-10">
             <button
                 onClick={() => setOpen(!open)}
-                className="text-base font-semibold text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white flex items-center gap-2"
+                className="text-xs tracking-widest uppercase text-white/30 hover:text-white flex items-center gap-2 transition-colors"
             >
                 {open ? '▾' : '▸'} Kaydedilmiş Portföyler ({portfolios.length})
             </button>
             {open && (
-                <div className="mt-3 space-y-3">
-                    {loading && <p className="text-sm text-gray-400">Yükleniyor...</p>}
-                    {error && <p className="text-sm text-red-500">{error}</p>}
+                <div className="mt-4 space-y-3">
+                    {loading && <p className="text-xs text-white/30">Yükleniyor...</p>}
+                    {error && <p className="text-xs text-red-400">{error}</p>}
                     {!loading && portfolios.length === 0 && (
-                        <p className="text-sm text-gray-400">Henüz kaydedilmiş portföy yok.</p>
+                        <p className="text-xs text-white/30">Henüz kaydedilmiş portföy yok.</p>
                     )}
                     {portfolios.map((portfolio) => (
-                        <div key={portfolio.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-2">
-                                <h3 className="font-semibold text-gray-800 dark:text-white">{portfolio.name}</h3>
-                                <div className="flex gap-3">
+                        <div key={portfolio.id} className="border border-white/10 rounded-xl p-4">
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-sm font-medium text-white">{portfolio.name}</h3>
+                                <div className="flex gap-4">
                                     <button
                                         onClick={() => onLoad(portfolio.portfolio_items)}
-                                        className="text-blue-500 hover:text-blue-700 text-sm"
+                                        className="text-xs text-white/40 hover:text-white transition-colors"
                                     >
-                                        Analiz Et
+                                        Yükle →
                                     </button>
                                     <button
                                         onClick={() => handleDelete(portfolio.id)}
-                                        className="text-red-400 hover:text-red-600 text-sm"
+                                        className="text-xs text-white/20 hover:text-red-400 transition-colors"
                                     >
                                         Sil
                                     </button>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-1 text-xs text-gray-500 dark:text-gray-400 mb-1 px-1">
+                            <div className="grid grid-cols-3 gap-1 text-xs text-white/20 mb-2">
                                 <span>Sembol</span>
                                 <span>Miktar</span>
-                                <span>Alış Fiyatı</span>
+                                <span>Alış</span>
                             </div>
                             {portfolio.portfolio_items?.map((item: any) => (
-                                <div key={item.id} className="grid grid-cols-3 gap-1 text-sm text-gray-700 dark:text-gray-300 px-1 py-1 border-t border-gray-100 dark:border-gray-800">
-                                    <span className="font-medium">{item.symbol.toUpperCase()}</span>
+                                <div key={item.id} className="grid grid-cols-3 gap-1 text-xs text-white/50 py-1 border-t border-white/5">
+                                    <span className="font-medium text-white/70">{item.symbol.toUpperCase()}</span>
                                     <span>{item.quantity}</span>
                                     <span>{item.purchase_price} {item.currency ?? 'TRY'}</span>
                                 </div>
