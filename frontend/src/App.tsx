@@ -7,7 +7,9 @@ import LandingPage from './pages/LandingPage';
 function App() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [showLanding, setShowLanding] = useState(true);
+  const [showLanding, setShowLanding] = useState(() => {
+    return !localStorage.getItem('hasSeenLanding');
+  });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -17,7 +19,10 @@ function App() {
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setShowLanding(true); // her giriş yapınca landing göster
+      if (_event === 'SIGNED_OUT') {
+        localStorage.removeItem('hasSeenLanding');
+        setShowLanding(true);
+      }
     });
   }, []);
 
@@ -25,9 +30,12 @@ function App() {
 
   if (!session) return <AuthPage />;
 
-  if (showLanding) return <LandingPage 
-    user={session.user} 
-    onStart={() => setShowLanding(false)} 
+  if (showLanding) return <LandingPage
+    user={session.user}
+    onStart={() => {
+      localStorage.setItem('hasSeenLanding', 'true');
+      setShowLanding(false);
+    }}
   />;
 
   return <PortfolioPage />;

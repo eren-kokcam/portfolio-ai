@@ -18,7 +18,15 @@ const AuthPage = () => {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
             } else {
-                const { error } = await supabase.auth.signUp({ email, password });
+                const { error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: name
+                        }
+                    }
+                });
                 if (error) throw error;
             }
         } catch (err: any) {

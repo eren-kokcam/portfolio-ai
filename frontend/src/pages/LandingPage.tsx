@@ -6,7 +6,9 @@ interface LandingPageProps {
 }
 
 const LandingPage = ({ user, onStart }: LandingPageProps) => {
-    const firstName = user?.email?.split('@')[0] || 'Kullanıcı';
+    const firstName = user?.user_metadata?.full_name 
+    || user?.email?.split('@')[0] 
+    || 'Kullanıcı';
 
     return (
         <div className="relative min-h-screen w-full bg-black overflow-hidden">
