@@ -63,9 +63,36 @@ const deletePortfolio = async (portfolioId: string) => {
     if (error) throw error;
 };
 
+const saveSnapshot = async (totalValue: number) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const { error } = await supabase
+        .from('portfolio_snapshots')
+        .insert({ user_id: user.id, total_value: totalValue });
+
+    if (error) throw error;
+};
+
+const getSnapshots = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const { data, error } = await supabase
+        .from('portfolio_snapshots')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return data;
+};
+
 export const portfolioDbService = {
     savePortfolio,
     saveFullPortfolio,
     getPortfolios,
     deletePortfolio,
+    saveSnapshot,
+    getSnapshots,
 }

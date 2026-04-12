@@ -7,6 +7,7 @@ import { supabase } from '../services/supabaseClient';
 import { portfolioDbService } from '../services/portfolioDbService';
 import type { PortfolioRequest } from '../types/portfolio';
 import PortfolioChart from '../components/PortfolioChart';
+import PortfolioLineChart from '../components/PortfolioLineChart';
 
 const PortfolioPage = () => {
     const { loading, analysis, error, stockData, submitPortfolio } = usePortfolio();
@@ -23,6 +24,29 @@ const PortfolioPage = () => {
             document.documentElement.classList.remove('dark');
         }
     }, [darkMode]);
+
+    useEffect(() => {
+        if (stockData.length > 0 && currentItems.length > 0) {
+            const totalValue = stockData.reduce((sum, stock) => {
+                const item = currentItems.find(i => 
+                    i.symbol
+                        .replace(/İ/g, 'I').replace(/ı/g, 'i')
+                        .replace(/Ş/g, 'S').replace(/ş/g, 's')
+                        .replace(/Ğ/g, 'G').replace(/ğ/g, 'g')
+                        .replace(/Ü/g, 'U').replace(/ü/g, 'u')
+                        .replace(/Ö/g, 'O').replace(/ö/g, 'o')
+                        .replace(/Ç/g, 'C').replace(/ç/g, 'c')
+                        .toUpperCase() === stock.symbol
+                );
+                if (!item) return sum;
+                return sum + stock.price * item.quantity;
+            }, 0);
+    
+            if (totalValue > 0) {
+                portfolioDbService.saveSnapshot(totalValue).catch(console.error);
+            }
+        }
+    }, [stockData]);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -77,6 +101,7 @@ const PortfolioPage = () => {
                         {analysis && stockData.length > 0 && (
                             <PortfolioChart items={currentItems} stockData={stockData} />
                         )}
+                        {/* <PortfolioLineChart /> */}
                         <div className="mt-4 flex gap-2">
                             <input
                                 type="text"
