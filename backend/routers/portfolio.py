@@ -14,5 +14,8 @@ def send_portfolio(request: PortfolioRequest):
     stock_data = fetch_portfolio_data(request)
     context = prepare_context(request.items, stock_data, request.user_question)
     analysis = analyze_portfolio(context)
-    return analysis
+    return {
+        "analysis": analysis,
+        "stock_data": stock_data
+    }
 

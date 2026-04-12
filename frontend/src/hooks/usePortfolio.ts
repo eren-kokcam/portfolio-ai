@@ -6,6 +6,7 @@ export const usePortfolio = () => {
     const [loading, setLoading] = useState(false);
     const [analysis, setAnalysis] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [stockData, setStockData] = useState<any[]>([]);
 
     const submitPortfolio = async (request: PortfolioRequest) => {
         setLoading(true);
@@ -13,7 +14,8 @@ export const usePortfolio = () => {
         setAnalysis(null);
         try {
             const response = await portfolioService.submitPortfolio(request);
-            setAnalysis(response);
+            setAnalysis(response.analysis);
+            setStockData(response.stock_data ?? []);
         } catch (err) {
             setError('Failed to submit portfolio. Please try again.');
         } finally {
@@ -21,5 +23,5 @@ export const usePortfolio = () => {
         }
     };
 
-    return { loading, analysis, error, submitPortfolio };
+    return { loading, analysis, error, stockData, submitPortfolio };
 };

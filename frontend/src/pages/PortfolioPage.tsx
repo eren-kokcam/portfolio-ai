@@ -6,9 +6,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { portfolioDbService } from '../services/portfolioDbService';
 import type { PortfolioRequest } from '../types/portfolio';
+import PortfolioChart from '../components/PortfolioChart';
 
 const PortfolioPage = () => {
-    const { loading, analysis, error, submitPortfolio } = usePortfolio();
+    const { loading, analysis, error, stockData, submitPortfolio } = usePortfolio();
     const [darkMode, setDarkMode] = useState(false);
     const [currentItems, setCurrentItems] = useState<any[]>([]);
     const [portfolioName, setPortfolioName] = useState('');
@@ -73,6 +74,9 @@ const PortfolioPage = () => {
                         <div className="text-gray-800 dark:text-gray-200">
                             <ReactMarkdown>{analysis}</ReactMarkdown>
                         </div>
+                        {analysis && stockData.length > 0 && (
+                            <PortfolioChart items={currentItems} stockData={stockData} />
+                        )}
                         <div className="mt-4 flex gap-2">
                             <input
                                 type="text"
