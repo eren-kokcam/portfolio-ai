@@ -11,3 +11,8 @@ input:-webkit-autofill:focus {
     -webkit-text-fill-color: white !important;
     transition: background-color 5000s ease-in-out 0s;
 }
+/* index.css'e ekle */
+#spline-watermark, 
+canvas + div[style*="position: absolute"] {
+    display: none !important;
+}

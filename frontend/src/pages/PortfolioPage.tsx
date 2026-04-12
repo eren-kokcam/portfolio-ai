@@ -1,3 +1,4 @@
+import Spline from '@splinetool/react-spline';
 import ReactMarkdown from 'react-markdown';
 import PortfolioForm from '../components/PortfolioForm';
 import SavedPortfolios from '../components/SavedPortfolios';
@@ -40,14 +41,8 @@ const PortfolioPage = () => {
         }
     }, [stockData]);
 
-    const handleSignOut = async () => {
-        await supabase.auth.signOut();
-    };
-
-    const handleLoad = (items: PortfolioItem[]) => {
-        setLoadedItems(items);
-    };
-
+    const handleSignOut = async () => await supabase.auth.signOut();
+    const handleLoad = (items: PortfolioItem[]) => setLoadedItems(items);
     const handleSubmit = (request: PortfolioRequest) => {
         setCurrentItems(request.items);
         submitPortfolio(request);
@@ -98,57 +93,92 @@ const PortfolioPage = () => {
             </aside>
 
             {/* Ana içerik */}
-            <main className="ml-60 flex-1 min-h-screen">
-                <div className="max-w-2xl px-12 py-12">
+            <main className="ml-60 flex-1 min-h-screen relative overflow-hidden">
 
-                    <div className="mb-10">
-                        <h1 className="text-4xl font-bold tracking-tight mb-2">Portföy Analizi</h1>
-                        <p className="text-white/30 text-sm">Varlıklarınızı girin, AI analiz etsin</p>
+                {/* Spline — sağ üst dekoratif */}
+                <div className="fixed bottom-0 right-0 w-[600px] h-[700px]" style={{ bottom: '-100px' }}>
+                    <Spline scene="https://prod.spline.design/4daccO-MAH36LS4n/scene.splinecode" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black pointer-events-none" />
+                </div>
+
+                <div className="relative z-10 max-w-2xl px-12 py-14">
+
+                    {/* Hero başlık */}
+                    <div className="mb-14">
+                        <p className="text-white/25 text-[10px] tracking-[0.3em] uppercase mb-6">
+                            Portföy Analizi
+                        </p>
+                        <h1 className="text-6xl font-bold tracking-tight leading-[1.05] mb-4">
+                            Varlıklarını<br />analiz et
+                        </h1>
+                        <p className="text-white/30 text-sm">
+                            Yapay zeka destekli portföy değerlendirmesi
+                        </p>
                     </div>
 
-                    <PortfolioForm onSubmit={handleSubmit} loading={loading} initialItems={loadedItems} />
+                    {/* Form */}
+                    <PortfolioForm
+                        onSubmit={handleSubmit}
+                        loading={loading}
+                        initialItems={loadedItems}
+                    />
 
+                    {/* Loading */}
                     {loading && (
-                        <div className="mt-8 flex items-center gap-3 text-white/30 text-sm">
+                        <div className="mt-10 flex items-center gap-3 text-white/30 text-sm">
                             <div className="w-3.5 h-3.5 border border-white/20 border-t-white/50 rounded-full animate-spin" />
                             Analiz yapılıyor...
                         </div>
                     )}
 
-                    {error && <p className="mt-6 text-red-400/80 text-sm">{error}</p>}
+                    {/* Error */}
+                    {error && (
+                        <p className="mt-8 text-red-400/70 text-sm">{error}</p>
+                    )}
 
+                    {/* Analiz sonucu */}
                     {analysis && (
-                        <div className="mt-14 space-y-10">
+                        <div className="mt-16 space-y-12">
 
+                            {/* Grafik */}
                             {stockData.length > 0 && (
                                 <div>
-                                    <p className="text-[10px] tracking-widest uppercase text-white/25 mb-5">Portföy Dağılımı</p>
+                                    <p className="text-[10px] tracking-[0.3em] uppercase text-white/25 mb-6">
+                                        Portföy Dağılımı
+                                    </p>
                                     <PortfolioChart items={currentItems} stockData={stockData} />
                                 </div>
                             )}
 
+                            {/* Analiz metni */}
                             <div>
-                                <p className="text-[10px] tracking-widest uppercase text-white/25 mb-5">Analiz Sonucu</p>
-                                <div className="prose prose-invert prose-sm max-w-none text-white/60 leading-relaxed">
+                                <p className="text-[10px] tracking-[0.3em] uppercase text-white/25 mb-6">
+                                    Analiz Sonucu
+                                </p>
+                                <div className="prose prose-invert prose-sm max-w-none text-white/55 leading-relaxed">
                                     <ReactMarkdown>{analysis}</ReactMarkdown>
                                 </div>
                             </div>
 
-                            <div className="pt-6 border-t border-white/[0.06]">
-                                <p className="text-[10px] tracking-widest uppercase text-white/25 mb-4">Portföyü Kaydet</p>
-                                <div className="flex gap-3">
+                            {/* Kaydet */}
+                            <div className="pt-8 border-t border-white/[0.06]">
+                                <p className="text-[10px] tracking-[0.3em] uppercase text-white/25 mb-5">
+                                    Portföyü Kaydet
+                                </p>
+                                <div className="flex gap-4">
                                     <input
                                         type="text"
                                         placeholder="Portföy adı"
                                         value={portfolioName}
                                         onChange={(e) => setPortfolioName(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-                                        className="flex-1 bg-transparent border-b border-white/15 py-2 text-white text-sm placeholder-white/20 focus:outline-none focus:border-white/40 transition-colors"
+                                        className="flex-1 bg-transparent border-b border-white/10 py-2 text-white text-sm placeholder-white/20 focus:outline-none focus:border-white/35 transition-colors"
                                     />
                                     <button
                                         onClick={handleSave}
                                         disabled={saving || !portfolioName.trim()}
-                                        className="text-[10px] tracking-widest uppercase text-white/40 hover:text-white transition-colors disabled:opacity-20"
+                                        className="text-[10px] tracking-widest uppercase text-white/35 hover:text-white transition-colors disabled:opacity-20 shrink-0"
                                     >
                                         {saving ? '...' : 'Kaydet →'}
                                     </button>
