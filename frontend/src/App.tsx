@@ -3,6 +3,7 @@ import { supabase } from './services/supabaseClient';
 import AuthPage from './pages/AuthPage';
 import PortfolioPage from './pages/PortfolioPage';
 import LandingPage from './pages/LandingPage';
+import { Toaster } from 'sonner';
 
 function App() {
   const [session, setSession] = useState<any>(null);
@@ -26,19 +27,23 @@ function App() {
     });
   }, []);
 
-  if (loading) return <div className="min-h-screen bg-black" />;
-
-  if (!session) return <AuthPage />;
-
-  if (showLanding) return <LandingPage
-    user={session.user}
-    onStart={() => {
-      localStorage.setItem('hasSeenLanding', 'true');
-      setShowLanding(false);
-    }}
-  />;
-
-  return <PortfolioPage />;
+  return (
+    <>
+      <Toaster theme="dark" position="bottom-right" />
+      {loading && <div className="min-h-screen bg-black" />}
+      {!loading && !session && <AuthPage />}
+      {!loading && session && showLanding && (
+        <LandingPage
+          user={session.user}
+          onStart={() => {
+            localStorage.setItem('hasSeenLanding', 'true');
+            setShowLanding(false);
+          }}
+        />
+      )}
+      {!loading && session && !showLanding && <PortfolioPage />}
+    </>
+  );
 }
 
 export default App;

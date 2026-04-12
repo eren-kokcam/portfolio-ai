@@ -1,4 +1,5 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, Sector } from 'recharts';
+import { normalizeSymbol } from '../utils/symbolUtils';
 
 interface PortfolioChartProps {
     items: any[];
@@ -8,12 +9,6 @@ interface PortfolioChartProps {
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
 const PortfolioChart = ({ items, stockData }: PortfolioChartProps) => {
-    const normalizeSymbol = (s: string) =>
-        s.replace(/İ/g, 'I').replace(/ı/g, 'i').replace(/Ş/g, 'S').replace(/ş/g, 's')
-         .replace(/Ğ/g, 'G').replace(/ğ/g, 'g').replace(/Ü/g, 'U').replace(/ü/g, 'u')
-         .replace(/Ö/g, 'O').replace(/ö/g, 'o').replace(/Ç/g, 'C').replace(/ç/g, 'c')
-         .toUpperCase();
-
     const stockMap = Object.fromEntries(stockData.map(s => [s.symbol, s]));
 
     const chartData = items
@@ -27,19 +22,23 @@ const PortfolioChart = ({ items, stockData }: PortfolioChartProps) => {
 
     if (chartData.length === 0) return null;
 
+    console.log('stockData:', stockData);
+
     return (
         <ResponsiveContainer width="100%" height={280}>
             <PieChart>
-                <Pie
-                    data={chartData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={90}
-                    label={({ name, percent }) => `${name} %${((percent ?? 0) * 100).toFixed(1)}`}
-                    labelLine={{ stroke: 'rgba(255,255,255,0.2)' }}
-                >
+            <Pie
+                data={chartData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={90}
+                label={({ name, percent }) => `${name} %${((percent ?? 0) * 100).toFixed(1)}`}
+                labelLine={{ stroke: 'rgba(255,255,255,0.2)' }}
+                onMouseEnter={() => {}}
+                activeShape={(props: any) => <Sector {...props} outerRadius={props.outerRadius} />}
+            >
                     {chartData.map((_, index) => (
                         <Cell key={index} fill={COLORS[index % COLORS.length]} />
                     ))}

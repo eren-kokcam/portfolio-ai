@@ -23,7 +23,10 @@ const savePortfolio = async (portfolioData: any) => {
 const savePortfolioItems = async (portfolioId: string, items: any[]) => {
     const { data, error } = await supabase
         .from('portfolio_items')
-        .insert(items.map(item => ({ ...item, portfolio_id: portfolioId })));
+        .insert(items.map(({ id, portfolio_id, ...rest }) => ({ 
+            ...rest, 
+            portfolio_id: portfolioId 
+        })));
 
     if (error) {
         console.error('Error saving portfolio items:', error);

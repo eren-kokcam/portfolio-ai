@@ -1,92 +1,85 @@
 import { useState, useEffect } from "react";
 import { portfolioDbService } from "../services/portfolioDbService";
+import type { PortfolioItem } from "../types/portfolio";
 
 interface SavedPortfoliosProps {
-    onLoad: (items: any[]) => void;
+    onLoad: (items: PortfolioItem[]) => void;
 }
 
 const SavedPortfolios = ({ onLoad }: SavedPortfoliosProps) => {
     const [portfolios, setPortfolios] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [open, setOpen] = useState(false);
-
-    const fetchPortfolios = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const data = await portfolioDbService.getPortfolios();
-            setPortfolios(data ?? []);
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleDelete = async (portfolioId: string) => {
-        try {
-            await portfolioDbService.deletePortfolio(portfolioId);
-            setPortfolios(portfolios.filter(p => p.id !== portfolioId));
-        } catch (err: any) {
-            alert('Silme hatası: ' + err.message);
-        }
-    };
+    const [expanded, setExpanded] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchPortfolios();
+        setLoading(true);
+        portfolioDbService.getPortfolios()
+            .then(data => setPortfolios(data ?? []))
+            .catch(console.error)
+            .finally(() => setLoading(false));
     }, []);
 
+    const handleDelete = async (e: React.MouseEvent, portfolioId: string) => {
+        e.stopPropagation();
+        try {
+            await portfolioDbService.deletePortfolio(portfolioId);
+            setPortfolios(prev => prev.filter(p => p.id !== portfolioId));
+        } catch (err: any) {
+            console.error(err);
+        }
+    };
+
     return (
-        <div className="mb-10">
-            <button
-                onClick={() => setOpen(!open)}
-                className="text-xs tracking-widest uppercase text-white/30 hover:text-white flex items-center gap-2 transition-colors"
-            >
-                {open ? '▾' : '▸'} Kaydedilmiş Portföyler ({portfolios.length})
-            </button>
-            {open && (
-                <div className="mt-4 space-y-3">
-                    {loading && <p className="text-xs text-white/30">Yükleniyor...</p>}
-                    {error && <p className="text-xs text-red-400">{error}</p>}
-                    {!loading && portfolios.length === 0 && (
-                        <p className="text-xs text-white/30">Henüz kaydedilmiş portföy yok.</p>
-                    )}
-                    {portfolios.map((portfolio) => (
-                        <div key={portfolio.id} className="border border-white/10 rounded-xl p-4">
-                            <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-medium text-white">{portfolio.name}</h3>
-                                <div className="flex gap-4">
-                                    <button
-                                        onClick={() => onLoad(portfolio.portfolio_items)}
-                                        className="text-xs text-white/40 hover:text-white transition-colors"
-                                    >
-                                        Yükle →
-                                    </button>
-                                    <button
-                                        onClick={() => handleDelete(portfolio.id)}
-                                        className="text-xs text-white/20 hover:text-red-400 transition-colors"
-                                    >
-                                        Sil
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-1 text-xs text-white/20 mb-2">
-                                <span>Sembol</span>
-                                <span>Miktar</span>
-                                <span>Alış</span>
-                            </div>
-                            {portfolio.portfolio_items?.map((item: any) => (
-                                <div key={item.id} className="grid grid-cols-3 gap-1 text-xs text-white/50 py-1 border-t border-white/5">
-                                    <span className="font-medium text-white/70">{item.symbol.toUpperCase()}</span>
-                                    <span>{item.quantity}</span>
-                                    <span>{item.purchase_price} {item.currency ?? 'TRY'}</span>
-                                </div>
-                            ))}
-                        </div>
-                    ))}
-                </div>
+        <div>
+            <p className="text-[10px] tracking-widest uppercase text-white/25 mb-4">
+                Kaydedilmiş ({portfolios.length})
+            </p>
+
+            {loading && <p className="text-[10px] text-white/20">Yükleniyor...</p>}
+
+            {!loading && portfolios.length === 0 && (
+                <p className="text-[10px] text-white/20">Henüz portföy yok</p>
             )}
+
+            <div className="space-y-0.5">
+                {portfolios.map((portfolio) => (
+                    <div key={portfolio.id}>
+                        <div
+                            className="group flex items-center justify-between py-2 cursor-pointer"
+                            onClick={() => setExpanded(expanded === portfolio.id ? null : portfolio.id)}
+                        >
+                            <span className="text-xs text-white/40 group-hover:text-white/80 transition-colors truncate flex-1">
+                                {portfolio.name}
+                            </span>
+                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onLoad(portfolio.portfolio_items); }}
+                                    className="text-[10px] text-white/40 hover:text-white transition-colors"
+                                >
+                                    Yükle
+                                </button>
+                                <button
+                                    onClick={(e) => handleDelete(e, portfolio.id)}
+                                    className="text-[10px] text-white/20 hover:text-red-400 transition-colors"
+                                >
+                                    Sil
+                                </button>
+                            </div>
+                        </div>
+
+                        {expanded === portfolio.id && (
+                            <div className="mb-2 pl-2 space-y-1">
+                                {portfolio.portfolio_items?.map((item: any) => (
+                                    <div key={item.id} className="flex justify-between text-[10px] text-white/20">
+                                        <span>{item.symbol.toUpperCase()}</span>
+                                        <span>{item.quantity}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
