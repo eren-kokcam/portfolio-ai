@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@variant dark (&:where(.dark, .dark *));
 
 * {
   font-family: 'Space Grotesk', sans-serif;
