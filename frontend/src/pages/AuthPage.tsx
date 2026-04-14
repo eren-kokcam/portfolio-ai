@@ -47,7 +47,7 @@ const AuthPage = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-[1] pointer-events-none" />
 
             {/* İçerik */}
-            <div className="relative z-10 min-h-screen flex flex-col justify-center px-16 max-w-lg">
+            <div className="relative z-10 min-h-screen flex flex-col justify-center px-8 md:16px max-w-lg">
                 
                 {/* Logo */}
                 <div className="mb-16">
@@ -56,7 +56,7 @@ const AuthPage = () => {
 
                 {/* Başlık */}
                 <div className="mb-12">
-                    <h1 className="text-7xl font-bold text-white leading-none tracking-tight mb-4">
+                    <h1 className="text-5xl md:text-7xl font-bold text-white leading-none tracking-tight mb-4">
                         {isLogin ? 'Giriş\nYap' : 'Kayıt\nOl'}
                     </h1>
                     <p className="text-white/30 text-sm">

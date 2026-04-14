@@ -25,7 +25,7 @@ const LandingPage = ({ user, onStart }: LandingPageProps) => {
                 <p className="text-white/40 text-xs tracking-widest uppercase mb-4">
                     Hoş geldin
                 </p>
-                <h1 className="text-6xl font-bold text-white tracking-tight mb-3">
+                <h1 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-3">
                     {firstName}
                 </h1>
                 <p className="text-white/30 text-sm mb-12 max-w-sm">
