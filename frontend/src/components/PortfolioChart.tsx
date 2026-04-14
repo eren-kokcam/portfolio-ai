@@ -25,10 +25,10 @@ const PortfolioChart = ({ items, stockData }: PortfolioChartProps) => {
     const total = chartData.reduce((sum, d) => sum + d.value, 0);
 
     return (
-        <div className="flex gap-8 items-center">
-
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:items-center">
+    
             {/* Pie */}
-            <div className="shrink-0">
+            <div className="shrink-0 flex justify-center">
                 <ResponsiveContainer width={200} height={200}>
                     <PieChart>
                         <Pie
@@ -62,7 +62,7 @@ const PortfolioChart = ({ items, stockData }: PortfolioChartProps) => {
                     </PieChart>
                 </ResponsiveContainer>
             </div>
-
+    
             {/* Legend + metrikler */}
             <div className="flex-1 space-y-3">
                 {chartData.map((d, index) => {
@@ -85,7 +85,7 @@ const PortfolioChart = ({ items, stockData }: PortfolioChartProps) => {
                         </div>
                     );
                 })}
-
+    
                 <div className="pt-3 border-t border-white/[0.06] flex justify-between">
                     <span className="text-[10px] tracking-widest uppercase text-white/25">Toplam</span>
                     <span className="text-sm font-semibold text-white">

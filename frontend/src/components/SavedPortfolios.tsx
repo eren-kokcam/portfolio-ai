@@ -51,7 +51,7 @@ const SavedPortfolios = ({ onLoad }: SavedPortfoliosProps) => {
                             <span className="text-xs text-white/40 group-hover:text-white/80 transition-colors truncate flex-1">
                                 {portfolio.name}
                             </span>
-                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity ml-2 shrink-0">
+                            <div className="flex gap-2 ml-2 shrink-0">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onLoad(portfolio.portfolio_items); }}
                                     className="text-[10px] text-white/40 hover:text-white transition-colors"
