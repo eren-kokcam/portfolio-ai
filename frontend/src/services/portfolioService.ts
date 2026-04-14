@@ -1,6 +1,6 @@
 import type { PortfolioRequest } from '../types/portfolio';
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export const portfolioService = {
     async submitPortfolio(portfolioRequest: PortfolioRequest) {
