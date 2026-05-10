@@ -197,7 +197,13 @@ const PortfolioPage = () => {
                                 <p className="text-[10px] tracking-[0.3em] uppercase text-white/25 mb-5 md:mb-6">
                                     Analiz Sonucu
                                 </p>
-                                <div className="prose prose-invert prose-sm max-w-none text-white/55 leading-relaxed">
+                                <div className="prose prose-invert prose-sm max-w-none leading-relaxed
+                                                prose-headings:text-white prose-headings:font-semibold prose-headings:tracking-tight
+                                                prose-h2:text-base prose-h2:mt-8 prose-h2:mb-3
+                                                prose-p:text-white/60 prose-p:leading-relaxed
+                                                prose-li:text-white/60 prose-li:leading-relaxed
+                                                prose-strong:text-white prose-strong:font-semibold
+                                                prose-ul:my-2 prose-ol:my-2">
                                     <ReactMarkdown>{analysis}</ReactMarkdown>
                                 </div>
                             </div>

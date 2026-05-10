@@ -41,6 +41,8 @@ const AuthPage = () => {
             {/* Spline */}
             <div className="absolute right-0 top-0 w-2/3 h-full" style={{ pointerEvents: 'auto' }}>
                 <Spline scene="https://prod.spline.design/KaQFqxuJcDmNrgiC/scene.splinecode" />
+                {/* Watermark gizle */}
+                <div className="absolute bottom-0 right-0 w-40 h-20 bg-black z-10 pointer-events-none" />
             </div>
 
             {/* Sol gradient overlay */}
