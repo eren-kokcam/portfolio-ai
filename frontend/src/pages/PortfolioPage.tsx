@@ -12,7 +12,7 @@ import { normalizeSymbol } from '../utils/symbolUtils';
 import { toast } from 'sonner';
 
 const PortfolioPage = () => {
-    const { loading, analysis, error, stockData, submitPortfolio } = usePortfolio();
+    const { loading, error, stockData, messages, submitPortfolio, resetConversation } = usePortfolio();
     const [currentItems, setCurrentItems] = useState<PortfolioItem[]>([]);
     const [portfolioName, setPortfolioName] = useState('');
     const [saving, setSaving] = useState(false);
@@ -43,14 +43,22 @@ const PortfolioPage = () => {
     }, [stockData]);
 
     const handleSignOut = async () => await supabase.auth.signOut();
+
     const handleLoad = (items: PortfolioItem[]) => {
         setLoadedItems(items);
         setSidebarOpen(false);
     };
+
     const handleSubmit = (request: PortfolioRequest) => {
         setCurrentItems(request.items);
+        resetConversation();
         submitPortfolio(request);
     };
+
+    const handleFollowUp = (question: string) => {
+        submitPortfolio({ items: currentItems, user_question: question });
+    };
+
     const handleSave = async () => {
         if (!portfolioName.trim()) return;
         setSaving(true);
@@ -70,18 +78,15 @@ const PortfolioPage = () => {
             <div className="mb-10">
                 <span className="text-white/25 text-[10px] tracking-[0.3em] uppercase">Portfolio AI</span>
             </div>
-
             {userName && (
                 <div className="mb-8 pb-8 border-b border-white/[0.06]">
                     <p className="text-white/25 text-[10px] tracking-widest uppercase mb-1.5">Hoş geldin</p>
                     <p className="text-white text-sm font-semibold tracking-tight">{userName}</p>
                 </div>
             )}
-
             <div className="flex-1 overflow-y-auto min-h-0">
                 <SavedPortfolios onLoad={handleLoad} />
             </div>
-
             <div className="pt-6 border-t border-white/[0.06]">
                 <button
                     onClick={handleSignOut}
@@ -170,7 +175,8 @@ const PortfolioPage = () => {
                         initialItems={loadedItems}
                     />
 
-                    {loading && (
+                    {/* İlk analiz loading — sadece henüz mesaj yokken */}
+                    {loading && messages.length === 0 && (
                         <div className="mt-10 flex items-center gap-3 text-white/30 text-sm">
                             <div className="w-3.5 h-3.5 border border-white/20 border-t-white/50 rounded-full animate-spin" />
                             Analiz yapılıyor...
@@ -181,9 +187,11 @@ const PortfolioPage = () => {
                         <p className="mt-8 text-red-400/70 text-sm">{error}</p>
                     )}
 
-                    {analysis && (
+                    {/* Sohbet alanı */}
+                    {messages.length > 0 && (
                         <div className="mt-12 md:mt-16 space-y-10 md:space-y-12">
 
+                            {/* Grafik */}
                             {stockData.length > 0 && (
                                 <div>
                                     <p className="text-[10px] tracking-[0.3em] uppercase text-white/25 mb-5 md:mb-6">
@@ -193,21 +201,67 @@ const PortfolioPage = () => {
                                 </div>
                             )}
 
-                            <div>
-                                <p className="text-[10px] tracking-[0.3em] uppercase text-white/25 mb-5 md:mb-6">
-                                    Analiz Sonucu
-                                </p>
-                                <div className="prose prose-invert prose-sm max-w-none leading-relaxed
-                                                prose-headings:text-white prose-headings:font-semibold prose-headings:tracking-tight
-                                                prose-h2:text-base prose-h2:mt-8 prose-h2:mb-3
-                                                prose-p:text-white/60 prose-p:leading-relaxed
-                                                prose-li:text-white/60 prose-li:leading-relaxed
-                                                prose-strong:text-white prose-strong:font-semibold
-                                                prose-ul:my-2 prose-ol:my-2">
-                                    <ReactMarkdown>{analysis}</ReactMarkdown>
-                                </div>
+                            {/* Mesajlar */}
+                            <div className="space-y-8">
+                                {messages.map((msg, index) => (
+                                    msg.role === 'assistant' && (
+                                        <div key={index}>
+                                            {index > 1 && (
+                                                <>
+                                                    <div className="flex items-center gap-3 mb-4">
+                                                        <div className="h-px flex-1 bg-white/[0.06]" />
+                                                        <span className="text-[10px] tracking-widest uppercase text-white/20">
+                                                            Yanıt {Math.floor(index / 2) + 1}
+                                                        </span>
+                                                        <div className="h-px flex-1 bg-white/[0.06]" />
+                                                    </div>
+                                                    <p className="text-xs text-white/30 mb-3 italic">
+                                                        "{messages[index - 1]?.content}"
+                                                    </p>
+                                                </>
+                                            )}
+                                            <div className="prose prose-invert prose-sm max-w-none leading-relaxed
+                                                            prose-headings:text-white prose-headings:font-semibold prose-headings:tracking-tight
+                                                            prose-h2:text-base prose-h2:mt-8 prose-h2:mb-3
+                                                            prose-p:text-white/60 prose-p:leading-relaxed
+                                                            prose-li:text-white/60 prose-li:leading-relaxed
+                                                            prose-strong:text-white prose-strong:font-semibold
+                                                            prose-ul:my-2 prose-ol:my-2">
+                                                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                            </div>
+                                        </div>
+                                    )
+                                ))}
                             </div>
 
+                            {/* Devam et */}
+                            <div className="border-t border-white/[0.06] pt-6">
+                                <p className="text-[10px] tracking-[0.3em] uppercase text-white/25 mb-4">
+                                    Devam Et
+                                </p>
+                                <div className="flex gap-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Sorunuzu yazın..."
+                                        disabled={loading}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                                                handleFollowUp(e.currentTarget.value);
+                                                e.currentTarget.value = '';
+                                            }
+                                        }}
+                                        className="flex-1 bg-transparent border-b border-white/10 py-2 text-white text-sm placeholder-white/20 focus:outline-none focus:border-white/35 transition-colors disabled:opacity-40"
+                                    />
+                                </div>
+                                {loading && (
+                                    <div className="mt-4 flex items-center gap-3 text-white/30 text-sm">
+                                        <div className="w-3.5 h-3.5 border border-white/20 border-t-white/50 rounded-full animate-spin" />
+                                        Analiz yapılıyor...
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Kaydet */}
                             <div className="pt-6 md:pt-8 border-t border-white/[0.06]">
                                 <p className="text-[10px] tracking-[0.3em] uppercase text-white/25 mb-4 md:mb-5">
                                     Portföyü Kaydet
@@ -230,6 +284,7 @@ const PortfolioPage = () => {
                                     </button>
                                 </div>
                             </div>
+
                         </div>
                     )}
                 </div>
