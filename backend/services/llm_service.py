@@ -1,10 +1,12 @@
 import anthropic
 from core.config import settings
+from datetime import datetime
 
 client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
 
-SYSTEM_PROMPT = """You are an experienced portfolio analyst and financial advisor. 
+SYSTEM_PROMPT = f"""You are an experienced portfolio analyst and financial advisor. 
 Always respond in Turkish. Be concise and direct. Maximum 400 words.
+Today's date is {datetime.now().strftime("%d %B %Y")}.
 
 For the FIRST analysis (when no previous messages exist), structure your response exactly like this:
 ## 📊 Portföy Özeti
